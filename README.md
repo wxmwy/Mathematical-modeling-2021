@@ -89,7 +89,7 @@ for i in contours:
 
 ##### 2.2.3 无监督学习方法
 
-按照https://github.com/Yonv1943/Unsupervised-Segmentation/tree/master修改后使用，详情见**image_segmentation**文件，由于运行时间过长，添加了图片下采样操作，同时没有使用大训练迭代次数，有小概率会跑崩
+按照 https://github.com/Yonv1943/Unsupervised-Segmentation/tree/master 修改后使用，详情见**image_segmentation**文件，由于运行时间过长，添加了图片下采样操作，同时没有使用大训练迭代次数，有小概率会跑崩
 
 下采样图和分割结果如下图所示，取分割后中心颜色区域为矿土面积，表现效果目前最好：
 
