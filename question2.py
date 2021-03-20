@@ -1,6 +1,7 @@
 import cv2
 import sys
 import numpy as np
+from image_segmentation import run
 
 src = sys.argv[1]
 
@@ -12,6 +13,7 @@ else:
     path2 = src + "-2.jpg"
 
 # 彩色读取
+print(path2)
 img = cv2.imread(path2, 1)
 
 # 转化为hsv图
@@ -31,20 +33,22 @@ else:
     low_hsv = np.array([26, 43, 46])
     high_hsv = np.array([77, 255, 255])
 
+    '''
+    方法一
     # 二值化，剔除蓝色背景  //效果8太好
-    #low_hsv = np.array([100, 43, 46])
-    #high_hsv = np.array([124, 255, 255])
-    #mask = cv2.inRange(hsv, lowerb=low_hsv, upperb=high_hsv)
-    #area = len(mask.astype(np.int8)[mask==0])
+    low_hsv = np.array([100, 43, 46])
+    high_hsv = np.array([124, 255, 255])
+    mask = cv2.inRange(hsv, lowerb=low_hsv, upperb=high_hsv)
+    area = len(mask.astype(np.int8)[mask==0])
+    '''
 
-
+    '''
+    方法二 直接分块，参数不好调
     # 画轮廓，调调参数勉强能用
     mat_img = cv2.imread(path1)
     mat_img2 = cv2.imread(path1, cv2.CV_8UC1)
     dst = cv2.adaptiveThreshold(mat_img2, 210, cv2.BORDER_REPLICATE, cv2.THRESH_BINARY_INV, 31, 10)
-    #cv2.imshow('newimage', dst)
-    #cv2.waitKey()
-    #cv2.destroyAllWindows()
+
     # 提取轮廓
     contours, h = cv2.findContours(dst, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     # 标记轮廓
@@ -54,15 +58,29 @@ else:
     area = 0
     for i in contours:
         area += cv2.contourArea(i)
-    #print("num is:", contours)
-    #print("area is:", area)
-    #cv2.imshow('newimage', mat_img)
+    '''
+
+    # 方法三 无监督的学习
+
+    # 下采样四次 缩小图片减少开销
+    src = cv2.imread(path1)
+    image = cv2.pyrDown(src)
+    image = cv2.pyrDown(image)
+    image = cv2.pyrDown(image)
+    image = cv2.pyrDown(image)
+
+    # 求取分色图
+    color_image = run(image)
+    color = color_image[int(color_image.shape[0] / 2)][int(color_image.shape[1] / 2)]
+    print("color is", color)
+    area = 256*len(color_image.astype(np.int8)[color_image == color])
+    cv2.imwrite('350-4.jpg', image)
+    cv2.imwrite('350-5.jpg', color_image)
     #cv2.waitKey()
     #cv2.destroyAllWindows()
 
 
-
-print("Oil-bearing area area is", black/area*100, "%")
+print("Oil-bearing area area is", black*100/area, "%")
 
 #cv2.imshow('newimage', mask)
 #cv2.waitKey()

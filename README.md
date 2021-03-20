@@ -35,11 +35,11 @@ black = len(mask.astype(np.int8)[mask==255])
 
 #### 2.2总岩土面积计算
 
-<font color=#FF0000> // To Do </font>
-
-<font color=#FF0000> 寻找更好的图片切割方法计算jpg面积 </font>
+##### 2.2.1 bmp图
 
 对于bmp图片，可以直接使用**mask.size**表示总面积，效果比较好
+
+##### 2.2.2 cv2自带的图片分割方法(已弃用)
 
 对于jpg图片，需要剔除背景部分，不太好调
 
@@ -87,10 +87,20 @@ for i in contours:
 
 参数值影响到了面积计算，这种方法把图片的一些不相干区域例如图右侧的水迹计算在内，右上角的痕迹有可能计算在内
 
+##### 2.2.3 无监督学习方法
+
+按照https://github.com/Yonv1943/Unsupervised-Segmentation/tree/master修改后使用，详情见**image_segmentation**文件，由于运行时间过长，添加了图片下采样操作，同时没有使用大训练迭代次数，有小概率会跑崩
+
+下采样图和分割结果如下图所示，取分割后中心颜色区域为矿土面积，表现效果目前最好：
+
+<img src=".\image\350-4.jpg" alt="350-4" style="zoom: 200%;" /><img src=".\image\350-5.jpg" alt="350-5" style="zoom: 200%;" />
+
 #### 2.3代码运行
 
+图片放在脚本同级文件夹
+
 ```shell
-python question2.py /path/to/img/350
+python question2.py 350
 ```
 
 
